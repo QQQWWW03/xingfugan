@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>阳光心态 · 幸福感测评 (牛津修订版)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #d4e6f1;
+            padding: 16px;
+        }
+        .card {
+            max-width: 900px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(2px);
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(0, 40, 80, 0.15), 0 6px 12px rgba(0, 20, 40, 0.1);
+            overflow: hidden;
+            padding: 24px 28px;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .section {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .section.active {
+            display: flex;
+        }
+
+        /* 封面专属淡蓝背景 */
+        .cover-section {
+            background: linear-gradient(145deg, #e1f0fa, #cae2f0);
+            border-radius: 28px;
+            padding: 40px 20px;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.7);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #13547a;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0 rgba(255,255,255,0.5);
+        }
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 400;
+            color: #1e5f7e;
+            border-bottom: 2px dashed #8fc5e9;
+            padding-bottom: 12px;
+            margin-bottom: 8px;
+        }
+        h3 {
+            font-size: 1.3rem;
+            color: #115277;
+            margin: 5px 0 15px;
+        }
+        .subhead {
+            font-size: 1.2rem;
+            color: #1e5f7e;
+            margin-bottom: 24px;
+            font-style: italic;
+            font-weight: 400;
+            border-bottom: 1px solid #9ec7e7;
+            display: inline-block;
+            padding-bottom: 8px;
+        }
+
+        /* 按钮组 */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .btn {
+            border: none;
+            background: white;
+            color: #13547a;
+            font-size: 1.15rem;
+            font-weight: 600;
+            padding: 14px 34px;
+            border-radius: 60px;
+            box-shadow: 0 4px 8px rgba(0, 40, 70, 0.15);
+            cursor: pointer;
+            transition: 0.15s;
+            border: 1px solid rgba(255,255,255,0.9);
+            letter-spacing: 0.5px;
+            flex: 0 1 auto;
+        }
+        .btn-primary {
+            background: #1f6e9c;
+            color: white;
+            box-shadow: 0 8px 18px rgba(19, 84, 122, 0.3);
+            border: 1px solid #8fcaf0;
+        }
+        .btn-primary:hover {
+            background: #13547a;
+            transform: scale(1.02);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #1f6e9c;
+            color: #1f6e9c;
+        }
+        .btn-outline:hover {
+            background: #d9ecfb;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(0, 55, 100, 0.2);
+        }
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        /* 测试区 — 29题滚动 */
+        .question-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 10px 0 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        .question-item {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(3px);
+            border-radius: 28px;
+            padding: 16px 20px;
+            border: 1px solid white;
+            box-shadow: 0 2px 8px rgba(0,30,50,0.1);
+        }
+        .question-text {
+            font-weight: 600;
+            color: #0c405e;
+            font-size: 1.05rem;
+            margin-bottom: 14px;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            align-items: center;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #eef6fd;
+            padding: 4px 12px;
+            border-radius: 40px;
+            border: 1px solid #c4dff5;
+        }
+        .option-item input[type="radio"] {
+            accent-color: #1f6e9c;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .option-item label {
+            font-size: 0.9rem;
+            color: #17577a;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* 结果页 */
+        .result-score-card {
+            background: linear-gradient(145deg, #ffffff, #f0f9ff);
+            border-radius: 48px;
+            padding: 30px 20px;
+            text-align: center;
+            border: 2px solid white;
+            box-shadow: 0 10px 20px rgba(0, 60, 100, 0.1);
+        }
+        .big-score {
+            font-size: 5rem;
+            font-weight: 700;
+            color: #0a3b55;
+            line-height: 1.1;
+        }
+        .score-label {
+            font-size: 1.3rem;
+            color: #23648a;
+            margin-bottom: 20px;
+        }
+        .feedback-msg {
+            background: #d4eaf7;
+            border-radius: 48px;
+            padding: 20px;
+            font-size: 1.2rem;
+            color: #024d72;
+            font-weight: 500;
+        }
+        .footnote {
+            color: #2e5f7a;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            border-top: 1px solid #b5d6ed;
+            padding-top: 15px;
+        }
+
+        /* 滚动条 */
+        .question-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .question-list::-webkit-scrollbar-track {
+            background: #d4e3ef;
+            border-radius: 12px;
+        }
+        .question-list::-webkit-scrollbar-thumb {
+            background: #5787a5;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <!-- 封面部分 (修改后：阳光心态 幸福感测评 + 根据牛津幸福感问卷进行的修订) -->
+    <div id="coverSection" class="section cover-section active">
+        <h1>☀️ 阳光心态 幸福感测评</h1>
+        <div class="subhead">根据牛津幸福感问卷进行的修订</div>
+        <p style="color: #13547a; max-width: 500px; margin: 30px auto; font-weight: 400; font-size: 1.1rem;">
+            请静心回答以下29个描述，<br>测量您内心的幸福感。
+        </p>
+        <div class="btn-group">
+            <button class="btn btn-primary" id="startTestBtn">✨ 开始测评</button>
+        </div>
+        <div style="margin-top: 30px; font-size: 0.9rem; color: #3e6f8f;">淡蓝色封面 · 29题完整版</div>
+    </div>
+
+    <!-- 测试内容部分 (29题) -->
+    <div id="testSection" class="section test-section">
+        <h2>📋 幸福感自评 · 29项</h2>
+        <p style="color:#23648a; margin-bottom: 5px;">请逐项选择最符合您的程度 (0=完全不同意 ~ 4=完全同意)</p>
+        <div id="questionsContainer" class="question-list">
+            <!-- 29题通过JS动态渲染 -->
+        </div>
+        <div class="btn-group" style="margin-top: 8px;">
+            <button class="btn btn-outline" id="backToCoverFromTest">◀ 返回封面</button>
+            <button class="btn btn-primary" id="viewResultBtn">📊 查看结果</button>
+        </div>
+        <p style="text-align: center; color: #23648a; margin-top: 6px;">* 完成全部29题后查看结果</p>
+    </div>
+
+    <!-- 结果与重新测评部分 -->
+    <div id="resultSection" class="section result-section">
+        <h2>🧘 您的幸福感结果</h2>
+        <div id="resultContent" class="result-score-card">
+            <div class="big-score" id="scoreDisplay">0</div>
+            <div class="score-label" id="maxScoreLabel">/ 116 分</div>
+            <div class="feedback-msg" id="feedbackMessage">等待测评...</div>
+        </div>
+        <div class="btn-group" style="margin-top: 25px;">
+            <button class="btn btn-outline" id="backToCoverFromResult">◀ 返回封面</button>
+            <button class="btn btn-primary" id="redoTestBtn">🔄 重新测评</button>
+        </div>
+        <div class="footnote">
+            * 基于牛津幸福问卷29题版本 (0-4分制) · 仅供参考
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // ---------- 牛津幸福感29题 (贴合原版风格) ----------
+    const questions = [
+        "我对生活感到满意。",
+        "我感觉精力充沛。",
+        "我对未来非常乐观。",
+        "我觉得生活很充实。",
+        "我对周围的事物充满兴趣。",
+        "我很容易做出决定。",
+        "我感觉自己能够应对任何困难。",
+        "我常常感到快乐。",
+        "我能够享受生活中的小事。",
+        "我感觉自己是一个有价值的人。",
+        "我能够与他人建立温暖而信任的关系。",
+        "我常常发自内心地笑。",
+        "我觉得生活是美好的。",
+        "我的睡眠质量很好。",
+        "我感觉自己身体健康。",
+        "我能够轻松地集中注意力。",
+        "我感觉生活有明确的意义。",
+        "我能够自由地表达自己的想法和感受。",
+        "我能够原谅自己和他人的错误。",
+        "我常常感到内心平静。",
+        "我对他人怀有同情心。",
+        "我感觉自己一直在成长和进步。",
+        "我能够享受独处的时光。",
+        "我对自己的外表感到满意。",
+        "我感觉自己被他人理解。",
+        "我能够轻松面对生活中的压力。",
+        "我大多数时候都有积极的情绪。",
+        "我觉得生活是多彩而有趣的。",
+        "我对未来充满希望。"
+    ];
+
+    // 确保29题
+    console.assert(questions.length === 29, '应有29题');
+
+    const options = [
+        { label: "完全不同意", value: 0 },
+        { label: "不同意", value: 1 },
+        { label: "中立", value: 2 },
+        { label: "同意", value: 3 },
+        { label: "完全同意", value: 4 }
+    ];
+
+    // 页面元素
+    const coverSec = document.getElementById('coverSection');
+    const testSec = document.getElementById('testSection');
+    const resultSec = document.getElementById('resultSection');
+    const questionsContainer = document.getElementById('questionsContainer');
+    const startBtn = document.getElementById('startTestBtn');
+    const backToCoverFromTest = document.getElementById('backToCoverFromTest');
+    const viewResultBtn = document.getElementById('viewResultBtn');
+    const backToCoverFromResult = document.getElementById('backToCoverFromResult');
+    const redoTestBtn = document.getElementById('redoTestBtn');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const maxScoreLabel = document.getElementById('maxScoreLabel');
+    const feedbackMessage = document.getElementById('feedbackMessage');
+
+    const MAX_SCORE = questions.length * 4; // 116
+
+    // ---------- 工具：切换可见section ----------
+    function showCover() {
+        coverSec.classList.add('active');
+        testSec.classList.remove('active');
+        resultSec.classList.remove('active');
+    }
+    function showTest() {
+        coverSec.classList.remove('active');
+        testSec.classList.add('active');
+        resultSec.classList.remove('active');
+    }
+    function showResult() {
+        coverSec.classList.remove('active');
+        testSec.classList.remove('active');
+        resultSec.classList.add('active');
+    }
+
+    // 重置所有radio (清空选择)
+    function resetAllRadios() {
+        const allRadios = document.querySelectorAll('#questionsContainer input[type="radio"]');
+        allRadios.forEach(radio => radio.checked = false);
+    }
+
+    // 渲染29题 (只执行一次)
+    function renderQuestions() {
+        if (questionsContainer.children.length > 0) {
+            resetAllRadios(); // 仅重置
+            return;
+        }
+
+        questions.forEach((qText, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question-item';
+            qDiv.dataset.qIndex = index;
+
+            const qTitle = document.createElement('div');
+            qTitle.className = 'question-text';
+            qTitle.innerText = `${index+1}. ${qText}`;
+            qDiv.appendChild(qTitle);
+
+            const optsDiv = document.createElement('div');
+            optsDiv.className = 'options';
+            const groupName = `q${index}`;
+
+            options.forEach(opt => {
+                const optItem = document.createElement('div');
+                optItem.className = 'option-item';
+
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = groupName;
+                radio.value = opt.value;
+                radio.id = `${groupName}_${opt.value}`;
+
+                const label = document.createElement('label');
+                label.htmlFor = `${groupName}_${opt.value}`;
+                label.innerText = opt.label;
+
+                optItem.appendChild(radio);
+                optItem.appendChild(label);
+                optsDiv.appendChild(optItem);
+            });
+
+            qDiv.appendChild(optsDiv);
+            questionsContainer.appendChild(qDiv);
+        });
+    }
+
+    // 计算总分，返回null表示未完成
+    function computeScore() {
+        let total = 0;
+        for (let i = 0; i < questions.length; i++) {
+            const radios = document.getElementsByName(`q${i}`);
+            let selectedVal = null;
+            for (let r of radios) {
+                if (r.checked) {
+                    selectedVal = parseInt(r.value, 10);
+                    break;
+                }
+            }
+            if (selectedVal === null) return null;
+            total += selectedVal;
+        }
+        return total;
+    }
+
+    // 更新结果页
+    function updateResultPage(score) {
+        scoreDisplay.innerText = score;
+        maxScoreLabel.innerText = `/ ${MAX_SCORE} 分`;
+
+        let msg = '';
+        if (score <= 58) { // 29*2 = 58 (平均分≤2)
+            msg = '🌱 幸福感偏低 · 可能近期缺少阳光。多留意积极面，给自己一些温柔的关怀。';
+        } else if (score <= 87) { // 29*3 = 87 (平均分2~3)
+            msg = '🌤️ 幸福感中等 · 你拥有平稳的心态，仍有向上空间。继续保持对生活的热忱。';
+        } else {
+            msg = '☀️ 幸福感高 · 你的内心充满阳光！这份能量也会感染身边的人。';
+        }
+        feedbackMessage.innerText = msg;
+    }
+
+    // 重置并显示测试页 (用于开始/重新测评)
+    function resetAndShowTest() {
+        resetAllRadios();
+        showTest();
+    }
+
+    // ---------- 事件绑定 ----------
+    startBtn.addEventListener('click', function() {
+        renderQuestions();      // 确保题目存在 (只渲染一次)
+        resetAndShowTest();
+    });
+
+    backToCoverFromTest.addEventListener('click', showCover);
+
+    viewResultBtn.addEventListener('click', function() {
+        const score = computeScore();
+        if (score === null) {
+            alert('请先完成全部29道题目，再查看结果 :)');
+            return;
+        }
+        updateResultPage(score);
+        showResult();
+    });
+
+    backToCoverFromResult.addEventListener('click', showCover);
+
+    redoTestBtn.addEventListener('click', function() {
+        renderQuestions();      // 确保题目渲染
+        resetAndShowTest();
+    });
+
+    // 初始化：渲染题目但不显示，只显示封面
+    window.addEventListener('load', function() {
+        renderQuestions();
+        showCover();
+    });
+})();
+</script>
+</body>
+</html>
